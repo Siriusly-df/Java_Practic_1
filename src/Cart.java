@@ -18,6 +18,10 @@ public class Cart {
         products.remove(product);
     }
 
+    public boolean removeProductById(int id) {
+        return products.removeIf(product -> product.getId() == id);
+    }
+
     public double getTotalPrice() {
         double total = 0;
         for (Product product : products) {

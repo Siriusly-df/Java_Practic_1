@@ -23,8 +23,10 @@ public class Main {
             System.out.println("1 - Переглянути список товарів");
             System.out.println("2 - Додати товар до кошика");
             System.out.println("3 - Переглянути кошик");
-            System.out.println("4 - Зробити замовлення");
-            System.out.println("5 - Переглянути історію замовлень");
+            System.out.println("4 - Видалити товар з кошика");
+            System.out.println("5 - Зробити замовлення");
+            System.out.println("6 - Переглянути історію замовлень");
+            System.out.println("7 - Пошук товарів");
             System.out.println("0 - Вийти");
 
             if (!scanner.hasNextInt()) {
@@ -34,6 +36,7 @@ public class Main {
             }
 
             int choice = scanner.nextInt();
+            scanner.nextLine();
 
             switch (choice) {
                 case 1:
@@ -41,7 +44,7 @@ public class Main {
                     for (Product p : catalog) {
                         System.out.println(p);
                     }
-                    break;
+                break;
                 case 2:
                     System.out.println("Введіть ID товару для додавання до кошика:");
                     int id = scanner.nextInt();
@@ -56,11 +59,25 @@ public class Main {
                     } else {
                         System.out.println("Товар з таким ID не знайдено.");
                     }
-                    break;
+                break;
                 case 3:
                     System.out.println("\n" + cart);
-                    break;
+                break;
                 case 4:
+                    if (cart.getProducts().isEmpty()) {
+                        System.out.println("Кошик порожній, немає чого видаляти.");
+                    } else {
+                        System.out.println("Введіть ID товару для видалення з кошика:");
+                        int removeId = scanner.nextInt();
+                        boolean removed = cart.removeProductById(removeId);
+                        if (removed) {
+                            System.out.println("Товар успішно видалено з кошика.");
+                        } else {
+                            System.out.println("Товар з таким ID не знайдено в кошику.");
+                        }
+                    }
+                break;
+                case 5:
                     if (cart.getProducts().isEmpty()) {
                         System.out.println("Кошик порожній. Додайте товари перед оформленням замовлення.");
                     } else {
@@ -70,8 +87,8 @@ public class Main {
                         System.out.println(order);
                         cart.clear();
                     }
-                    break;
-                case 5:
+                break;
+                case 6:
                     if (orderHistory.isEmpty()) {
                         System.out.println("Історія замовлень порожня.");
                     } else {
@@ -83,12 +100,35 @@ public class Main {
                         }
                     }
                     break;
+                case 7:
+                    System.out.println("Введіть назву товару або категорії для пошуку:");
+                    String query = scanner.nextLine().trim().toLowerCase();
+
+                    if (query.isEmpty()) {
+                        System.out.println("Пошуковий запит не може бути порожнім.");
+                        break;
+                    }
+
+                    List<Product> searchResults = catalog.stream()
+                            .filter(p -> p.getName().toLowerCase().contains(query) ||
+                                    (p.getCategory() != null && p.getCategory().getName().toLowerCase().contains(query)))
+                            .toList();
+
+                    if (searchResults.isEmpty()) {
+                        System.out.println("Товарів за запитом '" + query + "' не знайдено.");
+                    } else {
+                        System.out.println("\n--- Результати пошуку ---");
+                        for (Product p : searchResults) {
+                            System.out.println(p);
+                        }
+                    }
+                break;
                 case 0:
                     System.out.println("Дякуємо, що використовували наш магазин!");
                     return;
                 default:
                     System.out.println("Невідома опція. Спробуйте ще раз.");
-                    break;
+                break;
             }
         }
     }
